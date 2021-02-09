@@ -193,9 +193,7 @@
             </summary>
         </member>
         <member name="M:Cethleann.Archive.LINKARCHIVE.Dispose">
-            <summary>
-                Dispose <see cref="P:Cethleann.Archive.LINKARCHIVE.DataStream" />
-            </summary>
+            <inheritdoc />
         </member>
         <member name="M:Cethleann.Archive.LINKARCHIVE.ReadEntry(Cethleann.Structure.Archive.LFMArchiveEntry)">
             <summary>
@@ -231,9 +229,7 @@
             </summary>
         </member>
         <member name="M:Cethleann.Archive.LINKDATA.Dispose">
-            <summary>
-                Dispose of <seealso cref="P:Cethleann.Archive.LINKDATA.DataStream" />
-            </summary>
+            <inheritdoc />
         </member>
         <member name="M:Cethleann.Archive.LINKDATA.ReadEntry(Cethleann.Structure.Archive.LINKDATAEntry)">
             <summary>
@@ -285,14 +281,14 @@
                 Atelier PAK files
             </summary>
         </member>
-        <member name="M:Cethleann.Archive.PAK.#ctor(System.String,System.Boolean)">
+        <member name="M:Cethleann.Archive.PAK.#ctor(System.String,System.Boolean,System.Boolean)">
             <summary>
                 Initialize with a path
             </summary>
             <param name="path"></param>
             <param name="a18">set to true if the PAKs are from Atelier Sophie or a newer Atelier</param>
         </member>
-        <member name="M:Cethleann.Archive.PAK.#ctor(System.IO.Stream,System.Boolean)">
+        <member name="M:Cethleann.Archive.PAK.#ctor(System.IO.Stream,System.Boolean,System.Boolean)">
             <summary>
                 Initialize with a stream
             </summary>
@@ -375,7 +371,7 @@
                 ID Table parser for both versions
             </summary>
         </member>
-        <member name="M:Cethleann.Archive.PKGTBL.#ctor(System.Span{System.Byte},Cethleann.Structure.DataGame,Cethleann.Structure.Archive.IDTableFlags,System.Byte[],System.UInt64,System.UInt64)">
+        <member name="M:Cethleann.Archive.PKGTBL.#ctor(System.Span{System.Byte},System.String,Cethleann.Structure.Archive.IDTableFlags,System.Byte[],System.UInt64,System.UInt64)">
             <summary>
                 Initialize table with decryption constants
             </summary>
@@ -406,7 +402,7 @@
                 Raw table
             </summary>
         </member>
-        <member name="M:Cethleann.Archive.PKGTBL.Read(System.Span{System.Byte},Cethleann.Structure.DataGame,Cethleann.Structure.Archive.IDTableEntry,System.Byte[],System.UInt64,System.UInt64)">
+        <member name="M:Cethleann.Archive.PKGTBL.Read(System.Span{System.Byte},System.String,Cethleann.Structure.Archive.IDTableEntry,System.Byte[],System.UInt64,System.UInt64)">
             <summary>
                 Read a file with decryption constants using an id table entry
             </summary>
@@ -418,7 +414,7 @@
             <param name="divisor"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Archive.PKGTBL.Read(System.Span{System.Byte},Cethleann.Structure.DataGame,System.UInt32,System.UInt32,Cethleann.Structure.Archive.IDTableFlags,System.Byte[],System.UInt64,System.UInt64)">
+        <member name="M:Cethleann.Archive.PKGTBL.Read(System.Span{System.Byte},System.String,System.UInt32,System.UInt32,Cethleann.Structure.Archive.IDTableFlags,System.Byte[],System.UInt64,System.UInt64)">
             <summary>
                 Read a file with decryption constants
             </summary>
@@ -453,12 +449,17 @@
         </member>
         <member name="P:Cethleann.Archive.RDB.Directory">
             <summary>
+                Absolute path to external data directory
+            </summary>
+        </member>
+        <member name="P:Cethleann.Archive.RDB.DataDirectory">
+            <summary>
                 External data directory
             </summary>
         </member>
         <member name="P:Cethleann.Archive.RDB.Name">
             <summary>
-                Name of this RDB archive
+                Name of this  archive
             </summary>
         </member>
         <member name="P:Cethleann.Archive.RDB.Header">
@@ -502,11 +503,12 @@
             <returns></returns>
             <exception cref="T:System.IndexOutOfRangeException"></exception>
         </member>
-        <member name="M:Cethleann.Archive.RDB.GetExternalPath(Cethleann.Structure.KTID.KTIDReference)">
+        <member name="M:Cethleann.Archive.RDB.GetExternalPath(Cethleann.Structure.KTID.KTIDReference,System.String)">
             <summary>
                 Gets an external file path for a given index
             </summary>
             <param name="fileId"></param>
+            <param name="filePath"></param>
             <returns></returns>
         </member>
         <member name="M:Cethleann.Archive.RDB.ReadEntry(System.Int32)">
@@ -561,6 +563,24 @@
             </summary>
             <param name="text"></param>
             <returns></returns>
+        </member>
+        <member name="T:Cethleann.Archive.TinyDATA0">
+            <summary>
+                DATA0 is a list of information for which to read DATA1 with.
+            </summary>
+        </member>
+        <member name="M:Cethleann.Archive.TinyDATA0.#ctor(System.String)">
+            <summary>
+                Reads a DATA0 file list from a path
+            </summary>
+            <param name="path">File path to read</param>
+        </member>
+        <member name="M:Cethleann.Archive.TinyDATA0.#ctor(System.IO.Stream,System.Boolean)">
+            <summary>
+                Reads a DATA0 file list from a stream
+            </summary>
+            <param name="stream">Binary Read-capable Stream of DATA0</param>
+            <param name="leaveOpen">If true, won't dispose <paramref name="stream" /></param>
         </member>
         <member name="T:Cethleann.Audio.GCADPCMSound">
             <summary>
@@ -1054,21 +1074,20 @@
                 Compression helper class for TN's fork of KTGL
             </summary>
         </member>
-        <member name="M:Cethleann.Compression.DzCompression.Decompress(System.Span{System.Byte},System.Int32)">
+        <member name="M:Cethleann.Compression.DzCompression.Decompress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Decompresses a .dz stream.
             </summary>
             <param name="data"></param>
-            <param name="align"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Compression.DzCompression.Compress(System.Span{System.Byte},System.Int32,System.Int32)">
+        <member name="M:Cethleann.Compression.DzCompression.Compress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Compresses a stream into a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="blockSize"></param>
-            <param name="align"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
         <member name="T:Cethleann.Compression.Stream8000Compression">
@@ -1076,20 +1095,20 @@
                 Compression helper class for TN's fork of KTGL
             </summary>
         </member>
-        <member name="M:Cethleann.Compression.Stream8000Compression.Decompress(System.Span{System.Byte},System.Int32)">
+        <member name="M:Cethleann.Compression.Stream8000Compression.Decompress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Decompresses a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="decompressedSize"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Compression.Stream8000Compression.Compress(System.Span{System.Byte},System.Int32)">
+        <member name="M:Cethleann.Compression.Stream8000Compression.Compress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Compresses a stream into a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="blockSize"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
         <member name="T:Cethleann.Compression.StreamCompression">
@@ -1097,23 +1116,20 @@
                 Decompress Standard KTGL streams
             </summary>
         </member>
-        <member name="M:Cethleann.Compression.StreamCompression.Decompress(System.Span{System.Byte},System.Int32,Cethleann.Structure.DataCompression,System.Int32,System.Boolean)">
+        <member name="M:Cethleann.Compression.StreamCompression.Decompress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Decompresses a Gz stream
             </summary>
             <param name="data"></param>
-            <param name="decompressedSize"></param>
-            <param name="compressionFunc"></param>
-            <param name="blockSize"></param>
-            <param name="sizePrefix"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Compression.StreamCompression.Compress(System.Span{System.Byte},System.Int32)">
+        <member name="M:Cethleann.Compression.StreamCompression.Compress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Compresses a stream into a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="blockSize"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
         <member name="T:Cethleann.Compression.TableCompression">
@@ -1121,28 +1137,28 @@
                 Compression helper class for KTGL.
             </summary>
         </member>
-        <member name="M:Cethleann.Compression.TableCompression.Compress(System.Span{System.Byte},System.Int32)">
+        <member name="M:Cethleann.Compression.TableCompression.Compress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Compresses a stream into a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="blockSize"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Compression.TableCompression.Decompress(System.Span{System.Byte},System.Boolean)">
+        <member name="M:Cethleann.Compression.TableCompression.Decompress(System.Span{System.Byte},Cethleann.Compression.CompressionOptions)">
             <summary>
                 Decompresses a .gz stream.
             </summary>
             <param name="data"></param>
-            <param name="checkSanity"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.Compression.TableCompression.Decompress(System.IO.Stream,System.Int64)">
+        <member name="M:Cethleann.Compression.TableCompression.Decompress(System.IO.Stream,Cethleann.Compression.CompressionOptions)">
             <summary>
                 Wrapper for Stream based buffers
             </summary>
             <param name="stream"></param>
-            <param name="compressedSize"></param>
+            <param name="options"></param>
             <returns></returns>
         </member>
         <member name="T:Cethleann.Compression.XOREncryption">
@@ -1698,11 +1714,6 @@
                 lsof bones
             </summary>
         </member>
-        <member name="P:Cethleann.Graphics.G1ModelSection.G1MSkeleton.WorldBones">
-            <summary>
-                lsof world bones
-            </summary>
-        </member>
         <member name="P:Cethleann.Graphics.G1ModelSection.G1MSkeleton.SupportedVersion">
             <inheritdoc />
         </member>
@@ -2001,7 +2012,7 @@
             <param name="buffer"></param>
             <param name="count"></param>
         </member>
-        <member name="F:Cethleann.KTID.OBJDB.PropertyTypeMap">
+        <member name="P:Cethleann.KTID.OBJDB.PropertyTypeMap">
             <summary>
                 Property Loaders
             </summary>
@@ -2137,6 +2148,11 @@
             </summary>
             <param name="options"></param>
         </member>
+        <member name="P:Cethleann.ManagedFS.Flayn.Options">
+            <summary>
+                Nyotengu specific Options
+            </summary>
+        </member>
         <member name="P:Cethleann.ManagedFS.Flayn.Data">
             <summary>
                 Game data
@@ -2172,11 +2188,6 @@
                 Maximum number of entries found in the latest patch container.
             </summary>
         </member>
-        <member name="P:Cethleann.ManagedFS.Flayn.PrefixLinkData">
-            <summary>
-                Prefix LINKDATA archive name to files
-            </summary>
-        </member>
         <member name="P:Cethleann.ManagedFS.Flayn.FileList">
             <summary>
                 Loaded FileList.csv
@@ -2198,7 +2209,7 @@
         <member name="M:Cethleann.ManagedFS.Flayn.ReadEntry(System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Cethleann.ManagedFS.Flayn.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Flayn.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Flayn.GetFilename(System.Int32,System.String,Cethleann.Structure.DataType)">
@@ -2252,7 +2263,7 @@
             <param name="index"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.IManagedFS.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.IManagedFS.LoadFileList(System.String,System.String)">
             <summary>
                 Loads a predefined filelist mapping file ids to names
             </summary>
@@ -2316,7 +2327,7 @@
             <param name="index"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.Leonhart.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Leonhart.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Leonhart.GetFilename(System.Int32,System.String,Cethleann.Structure.DataType)">
@@ -2375,15 +2386,6 @@
             <param name="fields"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetFileListLocation(System.String,Cethleann.Structure.DataGame,System.String)">
-            <summary>
-                Get a filelist location via DataGame
-            </summary>
-            <param name="filename"></param>
-            <param name="game"></param>
-            <param name="system"></param>
-            <returns></returns>
-        </member>
         <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetFileListLocation(System.String,System.String,System.String)">
             <summary>
                 Get a filelist location via string
@@ -2393,7 +2395,7 @@
             <param name="system"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetSimpleFileList(System.String,Cethleann.Structure.DataGame,System.String)">
+        <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetSimpleFileList(System.String,System.String,System.String)">
             <summary>
                 Get and parse a key/value CSV
             </summary>
@@ -2402,7 +2404,7 @@
             <param name="system"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetNamedFileList(System.String,Cethleann.Structure.DataGame,System.String)">
+        <member name="M:Cethleann.ManagedFS.ManagedFSHelper.GetNamedFileList(System.String,System.String,System.String)">
             <summary>
                 Get a simple namespace/key/value CSV
             </summary>
@@ -2444,7 +2446,7 @@
         <member name="M:Cethleann.ManagedFS.Mitsunari.ReadEntry(System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Cethleann.ManagedFS.Mitsunari.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Mitsunari.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Mitsunari.GetFilename(System.Int32,System.String,Cethleann.Structure.DataType)">
@@ -2502,7 +2504,7 @@
         <member name="M:Cethleann.ManagedFS.Nyotengu.AddDataFS(System.String)">
             <inheritdoc />
         </member>
-        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Nyotengu.ReadEntry(Cethleann.Structure.KTID.KTIDReference)">
@@ -2512,15 +2514,7 @@
             <param name="ktid"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadKTIDFileList(System.String,Cethleann.Structure.DataGame)">
-            <summary>
-                Read a KTID File list
-            </summary>
-            <param name="filename"></param>
-            <param name="game"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadKTIDFileListShared(System.String,Cethleann.Structure.DataGame)">
+        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadKTIDFileListShared(System.String,System.String)">
             <summary>
                 Read a KTID File list with RDBShared
             </summary>
@@ -2536,7 +2530,7 @@
             <param name="game"></param>
             <returns></returns>
         </member>
-        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadKTIDFileListEx(System.String,Cethleann.Structure.DataGame)">
+        <member name="M:Cethleann.ManagedFS.Nyotengu.LoadKTIDFileListEx(System.String,System.String)">
             <summary>
                 Read a KTID file list preserving the namespace
             </summary>
@@ -2555,12 +2549,28 @@
                 Disposes
             </summary>
         </member>
-        <member name="M:Cethleann.ManagedFS.Nyotengu.SaveGeneratedFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Nyotengu.SaveGeneratedFileList(System.String,System.String)">
             <summary>
                 Save filelist to disk
             </summary>
             <param name="filename"></param>
             <param name="game"></param>
+        </member>
+        <member name="M:Cethleann.ManagedFS.Nyotengu.SaveGeneratedFileList(System.Collections.Generic.Dictionary{Cethleann.Structure.KTID.KTIDReference,System.ValueTuple{System.String,System.String}},System.String,System.String)">
+            <summary>
+                Save filelist to disk
+            </summary>
+            <param name="filelist"></param>
+            <param name="filename"></param>
+            <param name="game"></param>
+        </member>
+        <member name="T:Cethleann.ManagedFS.Options.Default.FlaynOptions">
+            <summary>
+                Flayn specific options implementation
+            </summary>
+        </member>
+        <member name="P:Cethleann.ManagedFS.Options.Default.FlaynOptions.TinyFlayn">
+            <inheritdoc />
         </member>
         <member name="T:Cethleann.ManagedFS.Options.Default.NyotenguOptions">
             <summary>
@@ -2577,6 +2587,19 @@
         </member>
         <member name="P:Cethleann.ManagedFS.Options.Default.ReisalinOptions.ReisalinA17">
             <inheritdoc />
+        </member>
+        <member name="P:Cethleann.ManagedFS.Options.Default.ReisalinOptions.ReisalinKeyFix">
+            <inheritdoc />
+        </member>
+        <member name="T:Cethleann.ManagedFS.Options.IFlaynOptions">
+            <summary>
+                Nyotengu specific options
+            </summary>
+        </member>
+        <member name="P:Cethleann.ManagedFS.Options.IFlaynOptions.TinyFlayn">
+            <summary>
+                Alternate format
+            </summary>
         </member>
         <member name="T:Cethleann.ManagedFS.Options.IManagedFSOptions">
             <summary>
@@ -2618,6 +2641,11 @@
                 Parse older, 32-bit Atelier PAKs
             </summary>
         </member>
+        <member name="P:Cethleann.ManagedFS.Options.IReisalinOptions.ReisalinKeyFix">
+            <summary>
+                Parse older, 32-bit Atelier PAKs
+            </summary>
+        </member>
         <member name="T:Cethleann.ManagedFS.Reisalin">
             <summary>
                 Manages PAK files
@@ -2651,7 +2679,7 @@
         <member name="M:Cethleann.ManagedFS.Reisalin.ReadEntry(System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Cethleann.ManagedFS.Reisalin.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Reisalin.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Reisalin.GetFilename(System.Int32,System.String,Cethleann.Structure.DataType)">
@@ -2754,7 +2782,7 @@
         <member name="M:Cethleann.ManagedFS.Yshtola.ReadEntry(System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Cethleann.ManagedFS.Yshtola.LoadFileList(System.String,System.Nullable{Cethleann.Structure.DataGame})">
+        <member name="M:Cethleann.ManagedFS.Yshtola.LoadFileList(System.String,System.String)">
             <inheritdoc />
         </member>
         <member name="M:Cethleann.ManagedFS.Yshtola.GetFilename(System.Int32,System.String,Cethleann.Structure.DataType)">
@@ -2762,6 +2790,32 @@
         </member>
         <member name="M:Cethleann.ManagedFS.Yshtola.AddDataFS(System.String)">
             <inheritdoc />
+        </member>
+        <member name="T:Cethleann.Pack.BPK">
+            <summary>
+                Binary Pack
+            </summary>
+        </member>
+        <member name="M:Cethleann.Pack.BPK.#ctor(System.Span{System.Byte})">
+            <summary>
+                Initialize with a buffer
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="P:Cethleann.Pack.BPK.Pointers">
+            <summary>
+                List of pointers defined by the BPK
+            </summary>
+        </member>
+        <member name="P:Cethleann.Pack.BPK.Header">
+            <summary>
+                Underlying Header
+            </summary>
+        </member>
+        <member name="P:Cethleann.Pack.BPK.Entries">
+            <summary>
+                Data Streams found in the BPK
+            </summary>
         </member>
         <member name="T:Cethleann.Pack.Bundle">
             <summary>

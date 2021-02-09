@@ -241,6 +241,15 @@ namespace Cethleann.Archive
             var (fileEntry, _, buffer) = ReadRDBEntry(blob);
             var fileEntryA = fileEntry.GetValueOrDefault();
             if (fileEntryA.Size == 0) return Memory<byte>.Empty;
+            // A file will never have both ZLib and LZ4 compression. Don't know why Encryption is the same bit as LZ4 though.
+            if (entry.Flags.HasFlag(RDBFlags.ZlibCompressed) && entry.Flags.HasFlag(RDBFlags.Encrypted))
+            {
+                // Decrypt!
+                Logger.Error("RDB", $"Decryption is not implemented. Flags: {entry.Flags:F}");
+                return buffer;
+                entry.Flags ^= RDBFlags.Encrypted;
+            }
+            
             if (entry.Flags.HasFlag(RDBFlags.ZlibCompressed) || entry.Flags.HasFlag(RDBFlags.Lz4Compressed))
                 return StreamCompression.Decompress(buffer, new CompressionOptions
                 {
